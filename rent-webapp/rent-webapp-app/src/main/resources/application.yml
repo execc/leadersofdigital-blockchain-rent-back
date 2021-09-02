@@ -1,0 +1,147 @@
+info:
+  name: "@project.name@"
+  version: "@project.version@"
+  description: "@project.description@"
+  parent: "@project.parent@"
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        event:
+          merge:
+            entity_copy_observer: allow
+        jdbc:
+          time_zone: UTC
+          log.warnings: true
+          lob.non_contextual_creation: true
+  application:
+    name: rent-app
+  datasource:
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 10
+      idle-timeout: 30000
+      pool-name: rent-app-jpa-pool
+      max-lifetime: 100000
+      connection-timeout: 30000
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:5432/db_rent_app
+    username: postgres
+    password: password
+  flyway:
+    enabled: true
+
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles:
+        http.server.requests: 0.5, 0.75, 0.95
+      percentiles-histogram:
+        http.server.requests: true
+      sla:
+        http.server.requests: 10ms, 100ms, 150ms, 250ms, 500ms, 1s
+  health:
+    rabbit:
+      enabled: false
+  info:
+    git:
+      enabled: true
+      mode: full
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+security:
+  oauth2:
+    resource:
+      id: rent-app
+      jwt:
+        key-value: -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAh+sA8O8616X/nYByQ2xu
+          hhFHmec3k6urgNOphfxmZ/JQ6ySdD8hnVAqUHpKwUJkd1Nad2zKp0j4DFLw6UZTz
+          yXo4vdPo7Ibn3h8qPqmL7DDciWuVhJ6r1Gxajn+VohqAeLIOkIALzgN2yBjGQYws
+          mjrZUmk5N7A4DuHd/PksoYjRMCoISfKfjtmx9LfCHOvqivEaCCEXcEv8vMpcnPd+
+          yqQ8cUb6ya5CKdSzO82ZivIzeiJ5pvuHAmh1KsWYoqpJ82zHrdwaTElWeiN1hMv2
+          wHykww+DMm/E04oeIhDoEnyyS7wvqsOC8tJo9nMnNoc93INfeICEojEi3RX2Mtwb
+          PQIDAQAB
+          -----END PUBLIC KEY-----
+    client:
+      id: rent-app
+      client-id: rent-app
+      client-secret: rent-app-secret
+      access-token-uri: ${vst-oauth.url}/oauth/token
+      resource-ids: vst-identity,vst-files
+      grant-type: client_credentials
+
+feign:
+  retryer:
+    maxAttempts: 5
+    period: 60000
+    maxPeriod: 900000
+  client:
+    config:
+      vst-identity:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+      vst-files:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+
+contracts:
+  sender: 3QVUnXdCq7vMJDjfcuM7G5qCqFKeBQuac8P
+  nodeAlias: node-0
+  fee: 0
+  config:
+    rent:
+      image: registry.weintegrator.com/rent-sc/rent-contract-app
+      imageHash:
+
+node:
+  config:
+    node-0:
+      url: http://localhost:6862
+      xApiKey: eGes8YFf3kGKmmPL
+      nodeOwnerAddress: 3QVUnXdCq7vMJDjfcuM7G5qCqFKeBQuac8P
+      nodeOwnerPubKey: 5U1u5LAxH62RehYfVeiHtRDS4uoQxZSVzYxVUeD1p7bXaTi51AEmgByvGQTokKGRbojFpJdMVP1TSwxHzc2AsSpW
+      keyStorePassword: 9P90mwgUMc7VbnfH
+    node-1:
+      url: http://localhost:16862
+      xApiKey: eGes8YFf3kGKmmPL
+      nodeOwnerAddress: 3Qbur18V2vQfJEcnkqM3H9ieNozVup4mG2v
+      nodeOwnerPubKey: 5vgrnvbLYrdPceDdX6Qd2r7v3756iRnchZ6bvzT7nWrCipZwLqXBYzYg1ipUMm1ZAeULxYEDN3Rj4caDNnPzRmQA
+      keyStorePassword: 9P90mwgUMc7VbnfH
+    node-2:
+      url: http://localhost:26862
+      xApiKey: eGes8YFf3kGKmmPL
+      nodeOwnerAddress: 3QZdm3KxwX4GRdrdGLxeZ4xmEyrv5rEXCqF
+      nodeOwnerPubKey: 35Nk2nVJZDwYZFdcd8cDZnFhSQUNnwmNMcC55beoJbzeyvqoUzfcsybnPN7grH4QwNJQAhiePeyeXSNPtWhTm9zw
+      keyStorePassword: 9P90mwgUMc7VbnfH
+
+tx-observer:
+  syncHistory: false
+
+vst-oauth:
+  url: http://localhost:8091
+
+vst-files:
+  url: http://localhost:8092
+
+swagger:
+  basePath: /
+  oauth-url: ${vst-oauth.url}/oauth/token
+  basePackage: com.wavesplatform.we.app.rent
+
+logging:
+  level:
+    com.wavesplatform.vst.api: DEBUG
