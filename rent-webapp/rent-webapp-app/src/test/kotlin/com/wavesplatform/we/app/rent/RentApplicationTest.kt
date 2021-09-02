@@ -7,7 +7,6 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.test.context.ActiveProfiles
 
-
 @SpringBootTest
 @ActiveProfiles("test")
 internal class RentApplicationTest {
@@ -21,5 +20,4 @@ internal class RentApplicationTest {
     @Test
     fun contextLoads() {
     }
-
 }

@@ -1,7 +1,7 @@
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import org.springframework.boot.gradle.tasks.bundling.BootJar
-import java.io.File
 
 val vstCommonsVersion: String by project
 val mavenUser: String by project
@@ -76,7 +76,6 @@ val replaceImageId = tasks.create("replaceImageId") {
         } catch (e: Exception) {
             println("Unable to find image ID for contract: $dockerName")
         }
-
 
         if (imageId.isNotBlank()) {
             val hash = imageId.substring(8, imageId.length - 1)

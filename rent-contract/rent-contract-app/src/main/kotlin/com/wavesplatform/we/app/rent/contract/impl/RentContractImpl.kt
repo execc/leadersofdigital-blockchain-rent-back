@@ -2,8 +2,8 @@ package com.wavesplatform.we.app.rent.contract.impl
 
 import com.wavesplatform.vst.contract.spring.annotation.ContractHandlerBean
 import com.wavesplatform.vst.contract.state.ContractState
-import com.wavesplatform.vst.contract.state.setValue
 import com.wavesplatform.vst.contract.state.getValue
+import com.wavesplatform.vst.contract.state.setValue
 import com.wavesplatform.we.app.rent.contract.RentContract
 
 @ContractHandlerBean
