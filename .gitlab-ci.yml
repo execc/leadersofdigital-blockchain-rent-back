@@ -1,0 +1,84 @@
+
+# include job templates
+include:
+  - project: 'integrator1/devops/gitlab-ci-jobs'
+    ref: master
+    file: 'common/test-gradle.gitlab-ci.yml'
+  - project: 'integrator1/devops/gitlab-ci-jobs'
+    ref: master
+    file: 'common/deploy-argocd.gitlab-ci.yml'
+  - project: 'integrator1/devops/gitlab-ci-jobs'
+    ref: master
+    file: 'common/sonarqube.gitlab-ci.yml'
+  - project: 'integrator1/devops/gitlab-ci-jobs'
+    ref: master
+    file: 'common/build-gradle.gitlab-ci.yml'
+  - project: 'integrator1/devops/gitlab-ci-jobs'
+    ref: master
+    file: 'common/helper.gitlab-ci.yml'
+  - project: 'integrator1/devops/gitlab-ci-jobs'
+    ref: master
+    file: 'common/git-flow.gitlab-ci.yml'
+
+stages:
+  - tests
+  - quality
+  - deploy
+  - notification
+  - release
+
+# check code quality
+code_quality:
+  extends:
+    - .check_code_quality
+  only:
+    - dev
+    - merge_requests
+    - /^.*rc.*$/
+    - /^.*release.*$/
+    - /^.*hotfix.*$/
+
+tests&build:
+  extends:
+    - .test-gradle
+  script:
+    - mkdir -p $HOME/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > $HOME/.docker/config.json
+    - ./gradlew -PmavenUser=$MAVEN_USER -PmavenPassword=$MAVEN_PASSWORD check build publish dockerPush
+    - docker images --format "{{json . }}" --no-trunc > images.json
+  only:
+    - dev
+    - /^.*rc.*$/
+    - /^.*release.*$/
+    - /^.*hotfix.*$/
+    - master
+
+tests-mr:
+  extends:
+    - .test-mr-gradle
+    
+.deploy:
+  extends:
+    - .deploy-helm-argocd
+  resource_group: $CI_COMMIT_REF_NAME  
+  variables:
+    HELM_REPOS_PATH: integrator1/helm
+    HELM_REPO_NAME: rent    
+  before_script:
+    # Create assotiative array
+    - declare -A array
+    - array[env.contracts.imageHash]=$(cat images.json | jq -r '. | select(.Tag != "latest") | select(.Repository | contains("rent-contract-app")) | .ID' | sed 's/sha256://')
+    - array[env.contracts.image]=$(cat images.json | jq -r '. | select(.Tag != "latest") | select(.Repository | contains("rent-contract-app")) | .Repository + ":" +.Tag')
+    - array[image.tag]=$(cat images.json | jq -r '. | select(.Tag != "latest") | select(.Repository | contains("rent-app")) | .Tag')
+
+deploy-dev:
+  extends:
+    - .deploy
+  environment:
+    name: dev
+    url: https://rent.weintegrator.com
+  variables:
+    HELM_VALUES_FILE: values-dev.yaml
+    ARGOCD_APP_NAME: rent-dev
+  only:
+    - dev 
