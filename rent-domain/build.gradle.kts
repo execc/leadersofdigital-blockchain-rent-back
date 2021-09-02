@@ -24,7 +24,7 @@ publishing {
     repositories {
         maven {
             name = "maven"
-            url = uri("https://artifacts.vostokservices.com/repository/${if (project.version.toString().endsWith("-SNAPSHOT")) "maven-snapshots" else "maven-releases"}")
+            url = uri("https://artifacts.wavesenterprise.com/repository/${if (project.version.toString().endsWith("-SNAPSHOT")) "maven-snapshots" else "maven-releases"}")
             credentials {
                 username = mavenUser
                 password = mavenPassword
