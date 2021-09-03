@@ -75,7 +75,7 @@ subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
     apply(plugin = "jacoco")
 
-    apply(from = "$rootDir/gradle/ktlint.gradle.kts")
+    //apply(from = "$rootDir/gradle/ktlint.gradle.kts")
 
     val jacocoCoverageFile = "$buildDir/reports/jacoco/jacoco-coverage.xml"
 

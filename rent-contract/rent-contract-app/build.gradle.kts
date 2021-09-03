@@ -34,7 +34,7 @@ jar.apply {
     enabled = true
 }
 
-val dockerName = "registry.weintegrator.com/rent-sc/rent-contract-app"
+val dockerName = "registry.weintegrator.com/icore-sc/rent-contract-app"
 val gitVersion = (project.extensions.extraProperties.get("gitVersion") as? groovy.lang.Closure<*>)?.call()
 
 fun getDate(): String {

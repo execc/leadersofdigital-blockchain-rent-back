@@ -99,13 +99,13 @@ feign:
         loggerLevel: basic
 
 contracts:
-  sender: 3QVUnXdCq7vMJDjfcuM7G5qCqFKeBQuac8P
+  sender: 3MBdJLCso23DUARYNbmB7CTG4sXJqSp3qxe
   nodeAlias: node-0
   fee: 0
   config:
     rent:
-      image: registry.weintegrator.com/rent-sc/rent-contract-app
-      imageHash: 774b5d6572f2f20252b0f35df2b5954418b9c1dab0a049e014b1ccc808ac8a3c
+      image: registry.weintegrator.com/icore-sc/rent-contract-app
+      imageHash: be0f71e002bc4a24704552d4af686c19290e6f6f262410923ba442803eae29af
 
 node:
   config:
@@ -136,6 +136,9 @@ vst-oauth:
 
 vst-files:
   url: https://rent.weintegrator.com/api/v0/vst-files
+
+vst-identity:
+  url: https://rent.weintegrator.com/api/v0/vst-identity
 
 swagger:
   basePath: /

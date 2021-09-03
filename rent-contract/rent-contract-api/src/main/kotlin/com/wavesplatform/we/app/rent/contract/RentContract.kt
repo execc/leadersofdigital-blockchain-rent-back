@@ -5,9 +5,43 @@ import com.wavesplatform.vst.contract.ContractInit
 
 interface RentContract {
 
+    // TODO: Tenant name, place, date, end data, date start, earningsPercent
     @ContractInit
-    fun create()
+    fun create(
+        tenant: String,
+        bank: String,
+        paymentAmount: Double,
+        earningPercent: Double,
+        place: String,
+        date: String,
+        endDate: String
+    )
 
     @ContractAction
-    fun invoke()
+    fun enterCreditConditions(
+        interestRate: Double,
+        limit: Double,
+        earningCreditPercent: Double
+    )
+
+    @ContractAction
+    fun acceptCreditConditions()
+
+    @ContractAction
+    fun enterEarning(
+        amount: Double
+    )
+
+    @ContractAction
+    fun takeRent()
+
+    @ContractAction
+    fun payCredit(
+        amount: Double
+    )
+
+    @ContractAction
+    fun payDebt(
+        amount: Double
+    )
 }
