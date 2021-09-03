@@ -7,8 +7,6 @@ val junitVersion: String by project
 val mockitoVersion: String by project
 val postgresVersion: String by project
 val jacksonKotlinVersion: String by project
-val vstCommonsVersion: String by project
-val weBootStarterVersion: String by project
 
 plugins {
     kotlin("plugin.spring")
@@ -30,8 +28,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonKotlinVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
 
-    implementation("com.wavesplatform.we:vst-tx-observer-starter:$vstCommonsVersion")
-    implementation("com.wavesplatform.we:we-platform-starter:$weBootStarterVersion")
+    implementation("com.wavesplatform.we:vst-tx-observer-starter")
+    implementation("com.wavesplatform.we:we-platform-starter")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")

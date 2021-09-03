@@ -105,37 +105,37 @@ contracts:
   config:
     rent:
       image: registry.weintegrator.com/rent-sc/rent-contract-app
-      imageHash:
+      imageHash: 774b5d6572f2f20252b0f35df2b5954418b9c1dab0a049e014b1ccc808ac8a3c
 
 node:
   config:
     node-0:
-      url: http://localhost:6862
-      xApiKey: eGes8YFf3kGKmmPL
-      nodeOwnerAddress: 3QVUnXdCq7vMJDjfcuM7G5qCqFKeBQuac8P
-      nodeOwnerPubKey: 5U1u5LAxH62RehYfVeiHtRDS4uoQxZSVzYxVUeD1p7bXaTi51AEmgByvGQTokKGRbojFpJdMVP1TSwxHzc2AsSpW
-      keyStorePassword: 9P90mwgUMc7VbnfH
+      url: https://rent.weintegrator.com/node-0
+      xApiKey: svupkey
+      nodeOwnerAddress: 3MBdJLCso23DUARYNbmB7CTG4sXJqSp3qxe
+      nodeOwnerPubKey: 4W9dr6JBcH8h2oCrBdgif42nQdzeYZmvf3wGzvnZjSzyCAFPpkEek8U8wC6RCFTvDexeVKAKmmgb8P8fHRkZPdeh
+      keyStorePassword: szAtrr8IuIk6iPXL
     node-1:
-      url: http://localhost:16862
-      xApiKey: eGes8YFf3kGKmmPL
-      nodeOwnerAddress: 3Qbur18V2vQfJEcnkqM3H9ieNozVup4mG2v
-      nodeOwnerPubKey: 5vgrnvbLYrdPceDdX6Qd2r7v3756iRnchZ6bvzT7nWrCipZwLqXBYzYg1ipUMm1ZAeULxYEDN3Rj4caDNnPzRmQA
-      keyStorePassword: 9P90mwgUMc7VbnfH
+      url: https://rent.weintegrator.com/node-1
+      xApiKey: svupkey
+      nodeOwnerAddress: 3ME55w8cuMZGfqog9zx1WyRYKsXwrQytEPp
+      nodeOwnerPubKey: Xh1vP9xY6oxCaSuiw1zLAVHn8qKPEvEUADijqbWzNSPqYcm1PGRhyeKPZ6na7PiKmsyMz4AyV8u6EGpHzqL8r2G
+      keyStorePassword: szAtrr8IuIk6iPXL
     node-2:
-      url: http://localhost:26862
-      xApiKey: eGes8YFf3kGKmmPL
-      nodeOwnerAddress: 3QZdm3KxwX4GRdrdGLxeZ4xmEyrv5rEXCqF
-      nodeOwnerPubKey: 35Nk2nVJZDwYZFdcd8cDZnFhSQUNnwmNMcC55beoJbzeyvqoUzfcsybnPN7grH4QwNJQAhiePeyeXSNPtWhTm9zw
-      keyStorePassword: 9P90mwgUMc7VbnfH
+      url: https://rent.weintegrator.com/node-2
+      xApiKey: svupkey
+      nodeOwnerAddress: 3MB9V1MpFSFQB7cTvDNeSKJKCw2sZTXoxJ9
+      nodeOwnerPubKey: 5Vni9AKB4XkyqgUbbhfDxe25E7shtQqVBGRkE5yPKWCvzWKU5FgznkcFYwqcay2DKMCwFJ9AP8Piyh5j6jTD7TTR
+      keyStorePassword: szAtrr8IuIk6iPXL
 
 tx-observer:
   syncHistory: false
 
 vst-oauth:
-  url: http://localhost:8091
+  url: https://rent.weintegrator.com/api/v0/vst-oauth2
 
 vst-files:
-  url: http://localhost:8092
+  url: https://rent.weintegrator.com/api/v0/vst-files
 
 swagger:
   basePath: /

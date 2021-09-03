@@ -3,7 +3,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
-val vstCommonsVersion: String by project
 val mavenUser: String by project
 val mavenPassword: String by project
 
@@ -17,7 +16,7 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("com.wavesplatform.we:vst-contract-grpc:$vstCommonsVersion")
+    implementation("com.wavesplatform.we:vst-contract-grpc")
     api(project(":rent-contract:rent-contract-api"))
     api(project(":rent-domain"))
     implementation("org.springframework:spring-aspects")

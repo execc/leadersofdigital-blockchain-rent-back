@@ -1,6 +1,5 @@
 val mavenUser: String by project
 val mavenPassword: String by project
-val vstCommonsVersion: String by project
 
 plugins {
     `maven-publish`
@@ -8,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    api("com.wavesplatform.we:vst-contract-common:$vstCommonsVersion")
+    api("com.wavesplatform.we:vst-contract-common")
     api(project(":rent-domain"))
 }
 

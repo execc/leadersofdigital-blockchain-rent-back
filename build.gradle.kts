@@ -13,6 +13,7 @@ val mavenUser: String by project
 val mavenPassword: String by project
 val testContainers: String by project
 val jacocoToolVersion: String by project
+val wePlatformVersion: String by project
 
 plugins {
     kotlin("jvm") apply false
@@ -120,6 +121,7 @@ subprojects {
                 bomProperty("kotlin.version", kotlinVersion)
             }
             mavenBom("com.fasterxml.jackson:jackson-bom:$jacksonKotlinVersion")
+            mavenBom("com.weintegrator:we-platform-bom:$wePlatformVersion")
         }
     }
 
