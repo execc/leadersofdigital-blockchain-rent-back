@@ -17,7 +17,7 @@
 
 На Unix/Linux системах перед сборкий нужно выполнить команду `chmod +x ./gradlew`
 
-Сборка проекта осуществляется командой: `./gradlew clean build dockerTag`
+Сборка проекта осуществляется командой: `./gradlew clean build dockerTag -x test`
 
 ## Запуск проекта
 
