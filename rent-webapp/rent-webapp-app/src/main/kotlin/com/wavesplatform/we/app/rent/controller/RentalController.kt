@@ -5,6 +5,8 @@ import com.wavesplatform.we.app.rent.api.CreditAgreementRq
 import com.wavesplatform.we.app.rent.api.EarningRq
 import com.wavesplatform.we.app.rent.api.PayRq
 import com.wavesplatform.we.app.rent.api.TxDto
+import com.wavesplatform.we.app.rent.api.TxStatus
+import com.wavesplatform.we.app.rent.api.TxStatusDto
 import com.wavesplatform.we.app.rent.domain.RentContractEntity
 import com.wavesplatform.we.app.rent.service.RentContractService
 import org.springframework.http.HttpStatus.ACCEPTED
@@ -62,6 +64,11 @@ class RentalController(
     fun payCredit(@PathVariable("id") id: String, rq: PayRq): ResponseEntity<TxDto> {
         val txId = contractService.payCredit(id, rq)
         return ResponseEntity(TxDto(txId), ACCEPTED)
+    }
+
+    @GetMapping("/tx/{id}/status")
+    fun txStatus(@PathVariable("id") id: String): TxStatusDto {
+        return TxStatusDto(contractService.txStatus(id))
     }
 
     @GetMapping

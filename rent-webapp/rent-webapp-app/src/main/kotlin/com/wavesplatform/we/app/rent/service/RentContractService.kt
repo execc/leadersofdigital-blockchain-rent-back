@@ -2,6 +2,10 @@ package com.wavesplatform.we.app.rent.service
 
 import com.wavesplatform.vst.api.identity.VstCompanyApi
 import com.wavesplatform.vst.contract.factory.ContractClientFactory
+import com.wavesplatform.vst.node.WeNodeApi
+import com.wavesplatform.vst.node.dto.TxStatus.ERROR
+import com.wavesplatform.vst.node.dto.TxStatus.FAILURE
+import com.wavesplatform.vst.node.dto.TxStatus.SUCCESS
 import com.wavesplatform.vst.node.dto.tx.CallContractTx
 import com.wavesplatform.vst.tx.observer.annotation.VstBlockListener
 import com.wavesplatform.vst.tx.observer.annotation.VstKeyFilter
@@ -9,6 +13,10 @@ import com.wavesplatform.vst.tx.observer.api.model.VstKeyEvent
 import com.wavesplatform.we.app.rent.api.CreateRentalAgreementRq
 import com.wavesplatform.we.app.rent.api.CreditAgreementRq
 import com.wavesplatform.we.app.rent.api.PayRq
+import com.wavesplatform.we.app.rent.api.TxStatus
+import com.wavesplatform.we.app.rent.api.TxStatus.COMPLETE
+import com.wavesplatform.we.app.rent.api.TxStatus.PENDING
+import com.wavesplatform.we.app.rent.api.TxStatus.UNKNOWN
 import com.wavesplatform.we.app.rent.contract.RentContract
 import com.wavesplatform.we.app.rent.db.ContractRepository
 import com.wavesplatform.we.app.rent.domain.ContractConditions
@@ -25,7 +33,8 @@ import org.springframework.transaction.annotation.Transactional
 class RentContractService(
     val factory: ContractClientFactory<RentContract>,
     val vstCompanyApi: VstCompanyApi,
-    val contractRepository: ContractRepository
+    val contractRepository: ContractRepository,
+    val weNodeApi: WeNodeApi
 ) {
 
         fun create(rq: CreateRentalAgreementRq): String {
@@ -214,5 +223,28 @@ class RentContractService(
 
     fun listAll(): List<RentContractEntity> {
         return contractRepository.findAll()
+    }
+
+    fun txStatus(id: String): TxStatus {
+        try {
+            val tx = weNodeApi.transactionInfo(id)
+            if (tx != null) {
+                return COMPLETE
+            }
+            val utx = weNodeApi.unconfirmedTransactionInfo(id)
+            if (utx != null) {
+                return PENDING
+            }
+            val statuses = weNodeApi.getContractTxStatus(id)
+            if (statuses.any { it.status == SUCCESS }) {
+                return COMPLETE
+            }
+            if (statuses.any { it.status == ERROR || it.status == FAILURE }) {
+                return TxStatus.ERROR
+            }
+            return UNKNOWN
+        } catch(e: Exception) {
+            return UNKNOWN
+        }
     }
 }
