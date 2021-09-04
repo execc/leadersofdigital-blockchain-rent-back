@@ -1,50 +1,81 @@
-# rent-app
+# Децентрализованная платформа обеспечения арендных платежей
 
-## Setting up
-Before building a project, create a file  `.gradle/gradle.properties`
-in you HOME directory.
+Платформа обеспечивает взаимодействие трех видов участников – арендодателей, 
+арендаторов и банков – и позволяет ликвидировать дебиторскую задолженность 
+арендодателей за счет гарантированного получения арендной платы путем автоматического 
+кредитования арендаторов. Ежедневное фондирование процентов от выручки арендаторов 
+повышает дисциплину финансового планирования арендаторов и позволяет уменьшить сроки 
+получения денежных средств арендодателями. За счет применения технологии распределенных 
+реестров и смарт-контрактов платформа снижает издержки 
+взаимодействия всех участвующих сторон.
 
-In this file enter the following properties:
-```
-mavenUser=<you login in Waves Enterprise Nexus>
-mavenPassword=<you password in Waves Enterprise Nexus>
-```
+## Сборка проекта
 
-Then initialize git repository inside the project by doing the following
-commands in project root directory:
-```
-git init
-git add .
-git commit -m "Initial commit"
-```
+Перед сборкой необходимо установить следующее ПО:
+- OpenJDK 1.8.0_212+ (Java 11 и выше не подойдут)
+- Docker версии 20.10+
 
-## Building (all modules)
-This command will build all modules in the project and publish corresponding
-applications into a docker registry
+На Unix/Linux системах перед сборкий нужно выполнить команду `chmod +x ./gradlew`
 
-`./gradlew clean dockerTag`
+Сборка проекта осуществляется командой: `./gradlew clean build dockerTag`
 
-Alternatively run the following command to push all docker images (both applications and smart contracts) to remote docker registry
-`./gradlew clena dockerPush`
+## Запуск проекта
 
-## Running from IDE
-Before you run an application you need to start Decentralized Application Platform with the following command in `docker-compose` directory:
-```
-docker-compose -f docker-compose-base.yml up -d
-```
-You also need to either:
- - build a smart contract using `./gradlew dockerTag` command to run contracts locally
- - or deploy (push) a smart contract using `./gradlew dockerPush` command to run contracts remotely
+Перед запуском необходимо запустить БД PostgreSQL. 
+Запустить БД можно при помощи команды:
 
-If you're using a local node deployment (docker-compose file) you also need to start you nodes
-by executing `docker-compose -f docker-compose.yml up -d` command in `docker-compose` directory.
-
-Alternatively, if no Decentralized Application Platform are used, you may run just Postgres with the following command:
 ```
 docker run --name app-pg -d -e POSTGRES_PASSWORD=password -e POSTGRES_USER=postgres -e POSTGRES_DB=db_rent_app -p 5432:5432 -d postgres:11.10
 ```
 
-### Pre-existing user names
-During code generation a pre-existing user is created with credentials: `user/user`.
-You can use that user to login into application and make calls to APIs.
-All users are managed via `docker-compose/config/vst-oauth2/user-companies.json` file.
+После запуска БД можно запустить проект командой 
+
+```
+docker run --name rent-app -p 8080:8080 registry.weintegrator.com/rent/rent-webapp-app:latest   
+```
+
+## Работа с проектом
+
+Проверить работу сервисов бэк-энда можно с использованием REST API. Для этого нужно открыть
+ресурс `http://localhost:8080/swagger-ui.html` в браузуре. 
+
+Для работы с REST необходима авторизация, которая проходит с использованием протокола Oauth2.
+Для авторизации нужно нажать кнопку `Authorize`, в поле `client` 
+заменить `api-client` на `demo-client`, и воспользовать одной из следующих пар логин/пароль:
+
+```
+sheremetevo/sheremetevo - для работы от лица Арендодателя
+alfabank/alfabank - для работы от лица Банка
+farsh/farsh - для работы от лица Арендатора (Бургерная #ФАРШ)
+beluga/beluga - для работы от лица Арендатора (Beluga Caviar Bar)
+kofehaus/kofehaus - для работы от лица Арендатора (Кофе-Хауз)
+```
+
+Описания REST методов приведены ниже.
+
+**GET /rent** - Возвращает список всех созданных договоров на аренду (любой участник)
+
+**POST /rent** - Создает новый договор на аренду (Арендодатель)
+
+**POST /rent/{id}/acceptCreditConditions** - Акцепт договора и условий кредита Арендатором (Арендатор)
+
+**POST /rent/{id}/enterCreditConditions** - Установка условий кредита Банком (Банк)
+
+**POST /rent/{id}/enterEarnings** - Отправка платежа на расщепление Банком (Банк)
+
+**POST /rent/{id}/payCredit** - Отправка платежа в счет погашения кредита (Банк)
+
+**POST /rent/{id}/payDebt** - Отправка платежа в счет погашения задолженности по Аренде (Банк)
+
+**POST /rent/{id}/takeRent** - Старт нового расчетного периода (Арендатор)
+
+**POST /rent/tx/{id}/status** - Получение статуса траназакции в Блокчейне (любой участник)
+
+## Использование обозревателя Блокчейн (Blockchain Explorer)
+
+Блокчейн эксплорер тестовой сети расположен по адресу: https://explorer.rent.weintegrator.com/.
+Для его использования необходимо зарегистрироваться или использовать пару логин/пароль: `dvasin@web3tech.ru / Dvasin@web3tech.ru` 
+
+## Тестовый стенд
+
+Тестовый стенд (бек + фронт + блокчейн) расположен по адресу https://rent.weintegrator.com/
