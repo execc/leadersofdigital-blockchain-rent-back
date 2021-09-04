@@ -25,13 +25,14 @@
 Запустить БД можно при помощи команды:
 
 ```
-docker run --name app-pg -d -e POSTGRES_PASSWORD=password -e POSTGRES_USER=postgres -e POSTGRES_DB=db_rent_app -p 5432:5432 -d postgres:11.10
+docker network create rent 
+docker run --network rent --name rent-pg -d -e POSTGRES_PASSWORD=password -e POSTGRES_USER=postgres -e POSTGRES_DB=db_rent_app -p 5432:5432 -d postgres:11.10
 ```
 
 После запуска БД можно запустить проект командой 
 
 ```
-docker run --name rent-app -p 8080:8080 registry.weintegrator.com/rent/rent-webapp-app:latest   
+docker run --network rent --name rent-app -d -e "spring.datasource.url=jdbc:postgresql://rent-pg:5432/db_rent_app" -p 8080:8080 registry.weintegrator.com/rent/rent-webapp-app:latest   
 ```
 
 ## Работа с проектом
