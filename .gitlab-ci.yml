@@ -67,8 +67,8 @@ tests-mr:
   before_script:
     # Create assotiative array
     - declare -A array
-    - array[env.contracts.imageHash]=$(cat images.json | jq -r '. | select(.Tag != "latest") | select(.Repository | contains("rent-contract-app")) | .ID' | sed 's/sha256://')
-    - array[env.contracts.image]=$(cat images.json | jq -r '. | select(.Tag != "latest") | select(.Repository | contains("rent-contract-app")) | .Repository + ":" +.Tag')
+    - array[env.contracts.config.rent.imageHash]=$(cat images.json | jq -r '. | select(.Tag != "latest") | select(.Repository | contains("rent-contract-app")) | .ID' | sed 's/sha256://')
+    - array[env.contracts.config.rent.image]=$(cat images.json | jq -r '. | select(.Tag != "latest") | select(.Repository | contains("rent-contract-app")) | .Repository + ":" +.Tag')
     - array[image.tag]=$(cat images.json | jq -r '. | select(.Tag != "latest") | select(.Repository | contains("rent-webapp-app")) | .Tag')
 
 deploy-dev:
