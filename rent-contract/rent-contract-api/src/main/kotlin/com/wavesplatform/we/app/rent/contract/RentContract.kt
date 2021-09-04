@@ -11,7 +11,9 @@ interface RentContract {
         tenant: String,
         bank: String,
         paymentAmount: Double,
+        minGuaranteedConcession: Double,
         earningPercent: Double,
+        concessionPercent: Double,
         place: String,
         date: String,
         endDate: String

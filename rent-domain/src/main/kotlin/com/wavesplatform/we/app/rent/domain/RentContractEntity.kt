@@ -30,6 +30,8 @@ data class RentContractEntity(
     val totalEarnings: Double = 0.0,
     val totalDebt: Double = 0.0,
     val creditDebt: Double = 0.0,
+    val concessionDebt: Double = 0.0,
+    val concessionEarnings: Double = 0.0,
     @OneToMany(fetch = EAGER, cascade = [ALL])
     @JoinTable(
             name = "CONTRACT_EVENTS",

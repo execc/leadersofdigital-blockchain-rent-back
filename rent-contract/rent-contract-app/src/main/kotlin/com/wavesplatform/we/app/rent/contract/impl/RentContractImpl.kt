@@ -41,12 +41,14 @@ class RentContractImpl(
     private var totalEarnings: Double? by state
     private var totalDebt: Double? by state
     private var creditDebt: Double? by state
+    private var concessionEarnings: Double? by state
+    private var concessionDebt: Double? by state
 
     // Contract events
     //
     private val events: Mapping<PaymentEvent> by state
 
-    override fun create(tenant: String, bank: String, paymentAmount: Double, earningPercent: Double, place: String, date: String, endDate: String) {
+    override fun create(tenant: String, bank: String, paymentAmount: Double, minGuaranteedConcession: Double, earningPercent: Double, concessionPercent: Double, place: String, date: String, endDate: String) {
         require(tenant.isNotBlank()) { "TENANT_ADDRESS_NOT_SET" }
         require(bank.isNotBlank()) { "BANK_ADDRESS_NOT_SET" }
         require(paymentAmount > 0) { "INVALID_PAYMENT_AMOUNT" }
@@ -61,6 +63,8 @@ class RentContractImpl(
                 conditionsId = call.id,
                 paymentAmount = paymentAmount,
                 earningPercent = earningPercent,
+                minGuaranteedConcession = minGuaranteedConcession,
+                concessionPercent = concessionPercent,
                 date = date,
                 endDate = endDate
         )
@@ -73,8 +77,11 @@ class RentContractImpl(
         this.totalDebt = 0.0
         this.creditDebt = 0.0
         this.totalEarnings = 0.0
+        this.concessionEarnings = 0.0
+        this.concessionDebt = 0.0
 
         this.totalDebt = conditions().paymentAmount
+        this.concessionDebt = conditions().minGuaranteedConcession
     }
 
     override fun enterCreditConditions(interestRate: Double, limit: Double, earningCreditPercent: Double) {
@@ -102,6 +109,7 @@ class RentContractImpl(
 
         var debtPart = 0.0
         var creditPart = 0.0
+        var concessionPart = 0.0
 
         if (totalDebt!! > 0) {
             debtPart = amount * conditions().earningPercent / 100.0
@@ -117,7 +125,8 @@ class RentContractImpl(
             }
         }
 
-        val earnings = amount - debtPart - creditPart
+        concessionPart = amount * conditions().concessionPercent / 100.0
+        val earnings = amount - debtPart - creditPart - concessionPart
 
         this.totalEarnings = this.totalEarnings!! + earnings
         if (debtPart > 0) {
@@ -126,6 +135,16 @@ class RentContractImpl(
         if (creditPart > 0) {
             this.creditDebt = this.creditDebt!! - creditPart
         }
+        if (concessionPart > 0) {
+            this.concessionEarnings = this.concessionEarnings!! + concessionPart
+            if (this.concessionDebt!! > 0) {
+                if (concessionPart > this.concessionDebt!!) {
+                    this.concessionDebt = 0.0
+                } else {
+                    this.concessionDebt = this.concessionDebt!! - concessionPart
+                }
+            }
+        }
 
         events[call.id] = PaymentEvent(
                 id = call.id,
@@ -133,6 +152,7 @@ class RentContractImpl(
                 amount = amount,
                 debtPart = debtPart,
                 creditPart = creditPart,
+                concessionPart = concessionPart,
                 earning = earnings,
                 date = Date()
         )
@@ -141,10 +161,11 @@ class RentContractImpl(
     override fun takeRent() {
         require(call.sender == landloardAddress) { "INVALID_SENDER" }
 
-        if (totalDebt!! > 0) {
-            creditDebt = creditDebt!! + totalDebt!!
+        if (totalDebt!! > 0 || concessionDebt!! > 0) {
+            creditDebt = creditDebt!! + totalDebt!! + concessionDebt!!
         }
         totalDebt = conditions().paymentAmount
+        concessionDebt = conditions().minGuaranteedConcession
 
         events[call.id] = PaymentEvent(
                 id = call.id,
@@ -153,6 +174,7 @@ class RentContractImpl(
                 debtPart = 0.0,
                 creditPart = creditDebt!!,
                 earning = 0.0,
+                concessionPart = 0.0,
                 date = Date()
         )
     }
@@ -170,6 +192,7 @@ class RentContractImpl(
                 debtPart = 0.0,
                 creditPart = 0.0,
                 earning = 0.0,
+                concessionPart = 0.0,
                 date = Date()
         )
     }
@@ -187,6 +210,7 @@ class RentContractImpl(
                 debtPart = 0.0,
                 creditPart = 0.0,
                 earning = 0.0,
+                concessionPart = 0.0,
                 date = Date()
         )
     }

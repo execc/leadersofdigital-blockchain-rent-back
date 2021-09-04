@@ -13,5 +13,6 @@ data class PaymentEvent(
     val earning: Double,
     val debtPart: Double,
     val creditPart: Double,
+    val concessionPart: Double,
     val date: Date
 )

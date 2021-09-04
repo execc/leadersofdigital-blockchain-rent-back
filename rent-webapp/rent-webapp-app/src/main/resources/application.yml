@@ -105,7 +105,7 @@ contracts:
   config:
     rent:
       image: registry.weintegrator.com/icore-sc/rent-contract-app
-      imageHash: be0f71e002bc4a24704552d4af686c19290e6f6f262410923ba442803eae29af
+      imageHash: 48c4fa83d3fa87f45339656c2f0b09f160da2acbe878085309ca3dbb1d13d54f
 
 node:
   config:

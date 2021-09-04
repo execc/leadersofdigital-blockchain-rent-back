@@ -11,6 +11,8 @@ data class ContractConditions(
     @Column(name = "cond_limit")
     val limit: Double = 0.0,
     val earningPercent: Double,
+    val minGuaranteedConcession: Double,
+    val concessionPercent: Double,
     val earningCreditPercent: Double = 0.0,
     val date: String,
     val endDate: String

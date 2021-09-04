@@ -40,6 +40,8 @@ class RentContractService(
                         endDate = rq.endDate,
                         earningPercent = rq.earningPercent,
                         paymentAmount = rq.paymentAmount,
+                        minGuaranteedConcession = rq.minGuaranteedAmount,
+                        concessionPercent = rq.concessionPercent,
                         place = rq.place
                 )
 
@@ -59,8 +61,12 @@ class RentContractService(
                                 date = rq.date,
                                 earningPercent = rq.earningPercent,
                                 endDate = rq.endDate,
-                                paymentAmount = rq.paymentAmount
+                                paymentAmount = rq.paymentAmount,
+                                minGuaranteedConcession = rq.minGuaranteedAmount,
+                                concessionPercent = rq.concessionPercent
                         ),
+                        concessionDebt = rq.minGuaranteedAmount,
+                        totalDebt = rq.paymentAmount,
                         status = NEW
                 ))
 
@@ -121,6 +127,32 @@ class RentContractService(
                         }
                 }
         }
+
+    @VstBlockListener
+    fun replicateConcessionEarnings(@VstKeyFilter(keyRegexp = "CONCESSION_EARNINGS") event: VstKeyEvent<Double>) {
+        if (event.tx.tx is CallContractTx) {
+            val contractId = (event.tx.tx as CallContractTx).contractId
+            if (contractRepository.existsById(contractId)) {
+                val contract = contractRepository.getOne(contractId)
+                contractRepository.save(contract.copy(
+                        concessionEarnings = event.payload
+                ))
+            }
+        }
+    }
+
+    @VstBlockListener
+    fun replicateConcessionDebt(@VstKeyFilter(keyRegexp = "CONCESSION_DEBT") event: VstKeyEvent<Double>) {
+        if (event.tx.tx is CallContractTx) {
+            val contractId = (event.tx.tx as CallContractTx).contractId
+            if (contractRepository.existsById(contractId)) {
+                val contract = contractRepository.getOne(contractId)
+                contractRepository.save(contract.copy(
+                        concessionDebt = event.payload
+                ))
+            }
+        }
+    }
 
         @VstBlockListener
         fun replicateStatus(@VstKeyFilter(keyRegexp = "STATUS") event: VstKeyEvent<ContractStatus>) {
