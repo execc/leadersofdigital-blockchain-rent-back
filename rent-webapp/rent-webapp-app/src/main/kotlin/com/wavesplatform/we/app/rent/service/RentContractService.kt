@@ -75,20 +75,24 @@ class RentContractService(
 
     @VstBlockListener
     fun replicateEvent(@VstKeyFilter(keyPrefix = "EVENTS_") event: VstKeyEvent<PaymentEvent>) {
-        val contract = contractRepository.getOne((event.tx.tx as CallContractTx).contractId)
-            contractRepository.save(contract.copy(
-                events = contract.events + event.payload
-        ))
+            if (contractRepository.existsById((event.tx.tx as CallContractTx).contractId)) {
+                    val contract = contractRepository.getOne((event.tx.tx as CallContractTx).contractId)
+                    contractRepository.save(contract.copy(
+                            events = contract.events + event.payload
+                    ))
+            }
     }
 
     @VstBlockListener
     fun replicateTotalDebt(@VstKeyFilter(keyRegexp = "TOTAL_DEBT") event: VstKeyEvent<Double>) {
         if (event.tx.tx is CallContractTx) {
                 val contractId = (event.tx.tx as CallContractTx).contractId
-                val contract = contractRepository.getOne(contractId)
-                contractRepository.save(contract.copy(
-                        totalDebt = event.payload
-                ))
+                if (contractRepository.existsById(contractId)) {
+                        val contract = contractRepository.getOne(contractId)
+                        contractRepository.save(contract.copy(
+                                totalDebt = event.payload
+                        ))
+                }
         }
     }
 
@@ -96,10 +100,12 @@ class RentContractService(
         fun replicateCreditDebt(@VstKeyFilter(keyRegexp = "CREDIT_DEBT") event: VstKeyEvent<Double>) {
                 if (event.tx.tx is CallContractTx) {
                         val contractId = (event.tx.tx as CallContractTx).contractId
-                        val contract = contractRepository.getOne(contractId)
-                        contractRepository.save(contract.copy(
-                                creditDebt = event.payload
-                        ))
+                        if (contractRepository.existsById(contractId)) {
+                                val contract = contractRepository.getOne(contractId)
+                                contractRepository.save(contract.copy(
+                                        creditDebt = event.payload
+                                ))
+                        }
                 }
         }
 
@@ -107,10 +113,12 @@ class RentContractService(
         fun replicateTotalEarnings(@VstKeyFilter(keyRegexp = "TOTAL_EARNINGS") event: VstKeyEvent<Double>) {
                 if (event.tx.tx is CallContractTx) {
                         val contractId = (event.tx.tx as CallContractTx).contractId
-                        val contract = contractRepository.getOne(contractId)
-                        contractRepository.save(contract.copy(
-                                totalEarnings = event.payload
-                        ))
+                        if (contractRepository.existsById(contractId)) {
+                                val contract = contractRepository.getOne(contractId)
+                                contractRepository.save(contract.copy(
+                                        totalEarnings = event.payload
+                                ))
+                        }
                 }
         }
 
@@ -118,10 +126,12 @@ class RentContractService(
         fun replicateStatus(@VstKeyFilter(keyRegexp = "STATUS") event: VstKeyEvent<ContractStatus>) {
                 if (event.tx.tx is CallContractTx) {
                         val contractId = (event.tx.tx as CallContractTx).contractId
-                        val contract = contractRepository.getOne(contractId)
-                        contractRepository.save(contract.copy(
-                                status = event.payload
-                        ))
+                        if (contractRepository.existsById(contractId)) {
+                                val contract = contractRepository.getOne(contractId)
+                                contractRepository.save(contract.copy(
+                                        status = event.payload
+                                ))
+                        }
                 }
         }
 
