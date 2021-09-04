@@ -7,6 +7,8 @@ import com.wavesplatform.vst.tx.observer.annotation.VstBlockListener
 import com.wavesplatform.vst.tx.observer.annotation.VstKeyFilter
 import com.wavesplatform.vst.tx.observer.api.model.VstKeyEvent
 import com.wavesplatform.we.app.rent.api.CreateRentalAgreementRq
+import com.wavesplatform.we.app.rent.api.CreditAgreementRq
+import com.wavesplatform.we.app.rent.api.PayRq
 import com.wavesplatform.we.app.rent.contract.RentContract
 import com.wavesplatform.we.app.rent.db.ContractRepository
 import com.wavesplatform.we.app.rent.domain.ContractConditions
@@ -78,6 +80,49 @@ class RentContractService(
                 api.contract().enterEarning(amount)
                 return api.lastTxId
         }
+
+    fun enterCreditConditions(id: String, rq: CreditAgreementRq): String {
+        val api = factory.client { it.contractId(id) }
+        api.contract().enterCreditConditions(
+                interestRate = rq.interestRate,
+                limit = rq.limit,
+                earningCreditPercent = rq.earningCreditPercent
+        )
+        val contract = contractRepository.getOne(id)
+        contractRepository.save(contract.copy(
+                conditions = contract.conditions.copy(
+                        interestRate = rq.interestRate,
+                        limit = rq.limit,
+                        earningCreditPercent = rq.earningCreditPercent
+                )
+        ))
+        return api.lastTxId
+    }
+
+
+    fun acceptCreditConditions(id: String): String {
+        val api = factory.client { it.contractId(id) }
+        api.contract().acceptCreditConditions()
+        return api.lastTxId
+    }
+
+    fun takeRent(id: String): String {
+        val api = factory.client { it.contractId(id) }
+        api.contract().takeRent()
+        return api.lastTxId
+    }
+
+    fun payCredit(id: String, rq: PayRq): String {
+        val api = factory.client { it.contractId(id) }
+        api.contract().payCredit(rq.amount)
+        return api.lastTxId
+    }
+
+    fun payDebt(id: String, rq: PayRq): String {
+        val api = factory.client { it.contractId(id) }
+        api.contract().payDebt(rq.amount)
+        return api.lastTxId
+    }
 
     @VstBlockListener
     fun replicateEvent(@VstKeyFilter(keyPrefix = "EVENTS_") event: VstKeyEvent<PaymentEvent>) {

@@ -55,7 +55,7 @@ class RentContractImpl(
         require(earningPercent > 0 && earningPercent < 100) { "INVALID_EARNING_PERCENT_RATE" }
 
         landloardAddress = call.sender
-        bankAddress = call.sender
+        bankAddress = bank
         tenantAddress = tenant
         status = NEW
 
@@ -109,7 +109,6 @@ class RentContractImpl(
 
         var debtPart = 0.0
         var creditPart = 0.0
-        var concessionPart = 0.0
 
         if (totalDebt!! > 0) {
             debtPart = amount * conditions().earningPercent / 100.0
@@ -125,7 +124,7 @@ class RentContractImpl(
             }
         }
 
-        concessionPart = amount * conditions().concessionPercent / 100.0
+        val concessionPart = amount * conditions().concessionPercent / 100.0
         val earnings = amount - debtPart - creditPart - concessionPart
 
         this.totalEarnings = this.totalEarnings!! + earnings
@@ -162,7 +161,9 @@ class RentContractImpl(
         require(call.sender == landloardAddress) { "INVALID_SENDER" }
 
         if (totalDebt!! > 0 || concessionDebt!! > 0) {
-            creditDebt = creditDebt!! + totalDebt!! + concessionDebt!!
+            val newCreditDebt = creditDebt!! + totalDebt!! + concessionDebt!!
+            require(newCreditDebt <= conditions().limit) { "CREDIT_LIMIT_OVERFLOW" }
+            creditDebt = newCreditDebt
         }
         totalDebt = conditions().paymentAmount
         concessionDebt = conditions().minGuaranteedConcession
